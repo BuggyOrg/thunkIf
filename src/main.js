@@ -33,18 +33,25 @@ const ifThunk = (ifNode) =>
     atomic: true
   })
 
-export default (graph) => Rewrite.rewrite([Rewrite.applyNode(
-  (node) => Node.component(node) === 'if',
+export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.applyNode(
   (node, graph) => {
+    if (Node.component(node) !== 'if') return false
     const lca = Algorithm.lowestCommonAncestors([Node.port('inTrue', node), Node.port('inFalse', node)], graph)
     const subsetA = Algorithm.predecessorsUpTo(Node.port('inTrue', node), lca, graph)
     const subsetB = Algorithm.predecessorsUpTo(Node.port('inFalse', node), lca, graph)
+    const all = subsetA.concat(subsetB)
+    if (!handleNonRecursives &&
+        all.filter((n) => Graph.get('isRecursive', n, graph)).length === 0) return false
+    if (subsetA.length === 0 || subsetB.length === 0) return false
+    return [node, subsetA, subsetB]
+  },
+  ([node, subsetA, subsetB], graph) => {
     const parent = Graph.parent(node, graph)
     return Graph.flow(
       Graph.Let([
         Graph.addNodeIn(parent, ifThunk(node)),
-        GraphRew.replaceByThunk(subsetA),
-        GraphRew.replaceByThunk(subsetB)
+        GraphRew.replaceByThunk(parent, subsetA),
+        GraphRew.replaceByThunk(parent, subsetB)
       ], ([ifThunk, lambdaA, lambdaB], graph) => {
         return Graph.flow(
           Graph.addEdge({from: Node.port('fn', lambdaA[1]), to: Node.port('inTrue', ifThunk)}),

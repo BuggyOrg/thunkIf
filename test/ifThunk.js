@@ -47,7 +47,7 @@ describe('» If to ThunkIf', () => {
       Graph.addEdge({from: 'if@choice', to: '@out'})
     )(Graph.compound({ports: [{port: 'cond', kind: 'input', type: 'Bool'}, {port: 'out', kind: 'output', type: 'generic'}]}))
 
-    const rewGraph = thunkIf(graph)
+    const rewGraph = thunkIf(graph, true)
     expect(Graph.hasNode('/ifThunk', rewGraph)).to.be.true
     expect(Graph.hasNode('/if', rewGraph)).to.not.be.true
     expect(Graph.nodesBy('/functional/lambda', rewGraph)).to.have.length(2)
@@ -62,5 +62,19 @@ describe('» If to ThunkIf', () => {
     expect(Graph.hasNode('/ifThunk', rewGraph)).to.be.true
     expect(Graph.hasNode('/if', rewGraph)).to.not.be.true
     expect(Graph.nodesDeepBy((n) => n.componentId === 'functional/lambda', rewGraph)).to.have.length(2)
+  })
+
+  it('can handle ifs with no predecessors', () => {
+    const graph = Graph.flow(
+      Graph.addNode(ifNode({name: 'if'})),
+      Graph.addEdge({from: '@v', to: 'if@inTrue'}),
+      Graph.addEdge({from: '@v', to: 'if@inFalse'}),
+      Graph.addEdge({from: '@cond', to: 'if@condition'}),
+      Graph.addEdge({from: 'if@choice', to: '@out'})
+    )(Graph.compound({ports: [{port: 'v', kind: 'input', type: 'g'}, {port: 'cond', kind: 'input', type: 'Bool'}, {port: 'out', kind: 'output', type: 'generic'}]}))
+
+    const rewGraph = thunkIf(graph, true)
+    expect(Graph.hasNode('/ifThunk', rewGraph)).to.not.be.true
+    expect(Graph.hasNode('/if', rewGraph)).to.be.true
   })
 })
