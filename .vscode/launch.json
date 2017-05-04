@@ -21,6 +21,24 @@
       "skipFiles": [
         "node_modules/lodash/**/*"
       ]
+    },
+    {
+      "name": "Debug",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "program": "${workspaceRoot}/.vscode/debug.js",
+      "cwd": "${workspaceRoot}",
+      "args": ["cons-new.json"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true,
+      "smartStep": false,
+      "skipFiles": [
+        "node_modules/lodash/**/*"
+      ]
     }
   ]
 }
