@@ -1,13 +1,13 @@
 {
   "name": "@buggyorg/thunk-if",
   "version": "0.2.8",
-  "description": "A toolchain that exposes a collection of rewrite rules.",
+  "description": "A tool that transforms dataflow ifs into thunked ifs that can be used in recursions.",
   "main": "lib/api.js",
   "scripts": {
     "test": "mocha --recursive --compilers js:babel-register && standard src/**/*.js",
     "build": "rm -rf lib && babel src -d lib",
-    "doc": "jsdoc -c .jsdoc.json && cp -r doc jsdoc/@buggyorg/rewrite-toolchain/`node -e \"console.log(require('./package.json').version)\"`",
-    "publish-docs": "npm run doc && (git diff --exit-code > /dev/null || (echo 'No clean head. Please commit or stash before pushing docs.' && exit 1))  && (git diff --cached --exit-code  > /dev/null  || (echo 'No clean head. Please commit or stash before pushing docs.' && exit 1)) && git add -f jsdoc/* && git commit -m '(doc) New documentation.' && git subtree split --prefix jsdoc/@buggyorg/graphtools/`node -e \"console.log(require('./package.json').version)\"` -b gh-pages && git push -f origin gh-pages:gh-pages && git branch -D gh-pages && git reset HEAD~1",
+    "doc": "jsdoc -c .jsdoc.json && cp -r doc jsdoc/@buggyorg/thunk-if`node -e \"console.log(require('./package.json').version)\"`",
+    "publish-docs": "npm run doc && (git diff --exit-code > /dev/null || (echo 'No clean head. Please commit or stash before pushing docs.' && exit 1))  && (git diff --cached --exit-code  > /dev/null  || (echo 'No clean head. Please commit or stash before pushing docs.' && exit 1)) && git add -f jsdoc/* && git commit -m '(doc) New documentation.' && git subtree split --prefix jsdoc/@buggyorg/thunk-if/`node -e \"console.log(require('./package.json').version)\"` -b gh-pages && git push -f origin gh-pages:gh-pages && git branch -D gh-pages && git reset HEAD~1",
     "prepublish": "rm -rf lib && babel src -d lib"
   },
   "keywords": [
