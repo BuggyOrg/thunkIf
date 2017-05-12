@@ -124,6 +124,7 @@ export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.
     const all = subsetA.concat(subsetB)
     if (!handleNonRecursives &&
         all.filter((n) => Graph.get('isRecursive', n, graph)).length === 0) return false
+    if (subsetA.length === 0 && subsetB.length === 0) return false
     return [node, subsetA, subsetB]
   },
   ([node, subsetA, subsetB], graph) => {
