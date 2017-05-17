@@ -73,7 +73,16 @@ const fullIfThunk = (node, subsetA, subsetB, graph) => {
           Graph.addEdge({from: Node.port('choice', ifThunk), to: s}))
       )(graph)
     }),
-    Graph.removeNode(node)
+    Graph.removeNode(node),
+    {
+      name: 'convert if to ifThunk',
+      constraints: {
+        requires: ['resolve'],
+        before: ['typify']
+      },
+      noIsomorphCheck: true,
+      regenerate: true
+    }
   )(graph)
 }
 
@@ -119,24 +128,32 @@ export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.
   (node, graph) => {
     if (Node.component(node) !== 'if') return false
     const lca = Algorithm.lowestCommonAncestors([Node.port('inTrue', node), Node.port('inFalse', node)], graph)
-    const subsetA = Algorithm.predecessorsUpTo(Node.port('inTrue', node), lca, graph)
-    const subsetB = Algorithm.predecessorsUpTo(Node.port('inFalse', node), lca, graph)
+    var subsetA = Algorithm.predecessorsUpTo(Node.port('inTrue', node), lca, graph)
+    var subsetB = Algorithm.predecessorsUpTo(Node.port('inFalse', node), lca, graph)
+    /*
     const all = subsetA.concat(subsetB)
     if (!handleNonRecursives &&
         all.filter((n) => Graph.get('isRecursive', n, graph)).length === 0) return false
+    if (subsetA.every((n) => !Graph.get('isRecursive', n, graph))) subsetA = []
+    if (subsetB.every((n) => !Graph.get('isRecursive', n, graph))) subsetB = []
+    */
     if (subsetA.length === 0 && subsetB.length === 0) return false
     return [node, subsetA, subsetB]
   },
   ([node, subsetA, subsetB], graph) => {
-    if (subsetA.length !== 0 && subsetB.length !== 0) return fullIfThunk(node, subsetA, subsetB, graph)
-    else if (subsetA.length === 0) return falseIfThunk(node, subsetB, graph)
-    else return trueIfThunk(node, subsetB, graph)
+    var res
+    if (subsetA.length !== 0 && subsetB.length !== 0) res = fullIfThunk(node, subsetA, subsetB, graph)
+    else if (subsetA.length === 0) res = falseIfThunk(node, subsetB, graph)
+    else res = trueIfThunk(node, subsetB, graph)
+    return res
   },
   {
     name: 'convert if to ifThunk',
     constraints: {
       requires: ['resolve'],
       before: ['typify']
-    }
+    },
+    noIsomorphCheck: true,
+    regenerate: true
   }
 )])(graph)
