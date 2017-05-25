@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
+      "name": "Mocha",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
@@ -29,7 +29,7 @@
       "protocol": "inspector",
       "program": "${workspaceRoot}/.vscode/debug.js",
       "cwd": "${workspaceRoot}",
-      "args": ["cons-new.json"],
+      "args": ["typed.json"],
       "env": {
         "NODE_ENV": "development"
       },

@@ -81,7 +81,9 @@ const fullIfThunk = (node, subsetA, subsetB, graph) => {
         before: ['typify']
       },
       noIsomorphCheck: true,
-      regenerate: true
+      regenerate: true,
+      inPlace: true,
+      debug: true
     }
   )(graph)
 }
