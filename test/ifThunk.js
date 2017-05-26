@@ -51,6 +51,7 @@ describe('» If to ThunkIf', () => {
     expect(Graph.hasNode('/ifThunk', rewGraph)).to.be.true
     expect(Graph.hasNode('/if', rewGraph)).to.not.be.true
     expect(Graph.nodesBy('/functional/lambda', rewGraph)).to.have.length(2)
+    expect(rewGraph.nodes[1].ports[0].type.data[1].data[0]).to.equal('Number')
     expect(Graph.edges(rewGraph)).to.have.length(4)
   })
 
