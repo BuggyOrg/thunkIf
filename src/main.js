@@ -132,7 +132,7 @@ export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.
     const lca = Algorithm.lowestCommonAncestors([Node.port('inTrue', node), Node.port('inFalse', node)], graph)
     var subsetA = Algorithm.predecessorsUpTo(Node.port('inTrue', node), lca, graph)
     var subsetB = Algorithm.predecessorsUpTo(Node.port('inFalse', node), lca, graph)
-    /*
+    /* a bit too simple.. no recursive node must be in the deepNodes of each element on the path...
     const all = subsetA.concat(subsetB)
     if (!handleNonRecursives &&
         all.filter((n) => Graph.get('isRecursive', n, graph)).length === 0) return false

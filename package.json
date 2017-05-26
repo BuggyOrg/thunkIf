@@ -16,8 +16,8 @@
   "author": "Maximilian Klein",
   "license": "MIT",
   "dependencies": {
-    "@buggyorg/graphtools": "^0.4.0-pre.36",
-    "@buggyorg/rewrite": "^0.2.9",
+    "@buggyorg/graphtools": "^0.4.0-pre.38",
+    "@buggyorg/rewrite": "^0.2.11",
     "cli-ext": "^1.1.0"
   },
   "devDependencies": {
