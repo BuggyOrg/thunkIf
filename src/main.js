@@ -103,7 +103,18 @@ const falseIfThunk = (node, subset, graph) => {
           Graph.addEdge({from: Node.port('choice', ifThunk), to: s}))
       )(graph)
     }),
-    Graph.removeNode(node)
+    Graph.removeNode(node),
+    {
+      name: 'convert if to (only falsy statement) ifThunk',
+      constraints: {
+        requires: ['resolve'],
+        before: ['typify']
+      },
+      noIsomorphCheck: true,
+      regenerate: true,
+      inPlace: true,
+      debug: true
+    }
   )(graph)
 }
 
@@ -122,7 +133,18 @@ const trueIfThunk = (node, subset, graph) => {
           Graph.addEdge({from: Node.port('choice', ifThunk), to: s}))
       )(graph)
     }),
-    Graph.removeNode(node)
+    Graph.removeNode(node),
+    {
+      name: 'convert if to (only truthy statement) ifThunk',
+      constraints: {
+        requires: ['resolve'],
+        before: ['typify']
+      },
+      noIsomorphCheck: true,
+      regenerate: true,
+      inPlace: true,
+      debug: true
+    }
   )(graph)
 }
 
@@ -139,6 +161,9 @@ export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.
     if (subsetA.every((n) => !Graph.get('isRecursive', n, graph))) subsetA = []
     if (subsetB.every((n) => !Graph.get('isRecursive', n, graph))) subsetB = []
     */
+    if (subsetA.every((n) => Node.component(n) === 'DUP')) subsetA = []
+    if (subsetB.every((n) => Node.component(n) === 'DUP')) subsetB = []
+
     if (subsetA.length === 0 && subsetB.length === 0) return false
     return [node, subsetA, subsetB]
   },
@@ -146,7 +171,7 @@ export default (graph, handleNonRecursives = false) => Rewrite.rewrite([Rewrite.
     var res
     if (subsetA.length !== 0 && subsetB.length !== 0) res = fullIfThunk(node, subsetA, subsetB, graph)
     else if (subsetA.length === 0) res = falseIfThunk(node, subsetB, graph)
-    else res = trueIfThunk(node, subsetB, graph)
+    else res = trueIfThunk(node, subsetA, graph)
     return res
   },
   {
